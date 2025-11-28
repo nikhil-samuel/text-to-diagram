@@ -1,0 +1,54 @@
+How to Register a Claim
+
+Overview: Follow these steps to register a claim from start to finish.
+
+1. Navigate to Claims
+   - Click "Claims" in the left navigation menu
+   - The claims list table appears with columns: Claim ID, Received At, Status, Assignee
+   - Use pagination controls (10, 20, 50, or 100 per page) to find your claim
+   - Focus on claims with "Open" status - these require registration
+
+2. Open Claim Details
+   - Click anywhere on the desired claim row
+   - The claim details page opens, featuring:
+     - Tabs: Claim Fields tab and Service Lines tab for organized data entry
+     - Right panel: Documents (toggle with the button in the header)
+     - Header: Displays Claim ID, status, assignee, and verification progress
+
+3. Review and Verify Claim Fields
+   - Start with the Claim Fields tab (default view)
+   - Use the "All Fields" or "All Issues" filters to focus your review
+   - For each field needing attention:
+     - Click the field card to focus
+     - Review suggested values from document extraction, API sources, or AI inference
+     - For medical code fields, use the code browser or search to find appropriate codes
+     - Select from autocomplete suggestions OR type a manual value
+     - Click the "Verify" button (appears on focus for pending fields)
+     - Use Tab or Enter to move efficiently between fields
+
+4. Review and Verify Service Lines
+   - Switch to the Service Lines tab
+   - Review each service line entry
+   - Verify fields within each service line, including any medical code fields
+   - Complete all required service line fields
+
+5. Upload and Review Documents
+   - Click the document toggle button in the header to open the Documents panel
+   - Upload documents: Drag and drop files, or click to browse
+   - Accepted formats: PDF, JPEG, PNG, JPG (up to 25MB per file)
+   - View documents in List View or Document View
+   - Use the document selector dropdown to switch between files
+
+6. Complete Registration
+   - Ensure all fields in both Claim Fields and Service Lines tabs show verified status (green checkmarks)
+   - When all fields are verified, an auto-success alert appears
+   - Click the "Register" button in the footer (enabled only when all fields are verified)
+   - Confirm in the modal dialog
+   - Upon success, claim status updates to "Registered"
+
+Alternative: Reject a Claim
+   - Click the "Reject" button in the footer
+   - Select a rejection reason from the configured catalog dropdown
+   - Optionally add notes to provide additional context
+   - Confirm the rejection
+   - Claim status updates to "Rejected" with the specified reason
