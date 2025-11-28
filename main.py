@@ -3,9 +3,11 @@
 Text-to-Diagram Converter using Nano Banana Pro (Gemini 3 Pro Image)
 
 Converts "How to" documentation into visual flowchart diagrams.
+Supports auto-extraction of multiple workflows from a single document.
 """
 
 import os
+import re
 import sys
 from pathlib import Path
 from dotenv import load_dotenv
@@ -105,21 +107,99 @@ def generate_diagram(text: str, output_path: str = "diagram") -> str:
         return None
 
 
+def extract_workflows(text: str) -> list[dict]:
+    """
+    Extract all 'How to' sections from documentation.
+    Returns list of dicts with 'title' and 'content' keys.
+    """
+    # Pattern matches "### **How to..." or "### How to..." headers
+    # and captures content until the next ### header or end of text
+    pattern = r'###\s*\*?\*?\s*(How to[^*\n]+)\*?\*?\s*\n(.*?)(?=\n###|\n---|\Z)'
+
+    matches = re.findall(pattern, text, re.DOTALL | re.IGNORECASE)
+
+    workflows = []
+    for title, content in matches:
+        title = title.strip().strip('*')
+        content = content.strip()
+        if content:  # Only include if there's actual content
+            workflows.append({
+                'title': title,
+                'content': f"{title}\n\n{content}"
+            })
+
+    return workflows
+
+
+def slugify(text: str) -> str:
+    """Convert title to filename-safe slug."""
+    # Remove "How to " prefix for shorter filenames
+    text = re.sub(r'^how\s+to\s+', '', text, flags=re.IGNORECASE)
+    # Convert to lowercase and replace spaces/special chars with underscores
+    text = re.sub(r'[^a-z0-9]+', '_', text.lower())
+    # Remove leading/trailing underscores
+    return text.strip('_')
+
+
+def generate_all_workflows(text: str, output_dir: str = "diagrams") -> list[str]:
+    """
+    Extract all workflows from text and generate diagrams for each.
+    Returns list of generated file paths.
+    """
+    workflows = extract_workflows(text)
+
+    if not workflows:
+        print("No 'How to' sections found in the document.")
+        return []
+
+    print(f"Found {len(workflows)} workflow(s):")
+    for i, w in enumerate(workflows, 1):
+        print(f"  {i}. {w['title']}")
+    print()
+
+    # Create output directory
+    output_path = Path(output_dir)
+    output_path.mkdir(exist_ok=True)
+
+    generated = []
+    for i, workflow in enumerate(workflows, 1):
+        print(f"\n[{i}/{len(workflows)}] Generating: {workflow['title']}")
+        filename = f"{i:02d}_{slugify(workflow['title'])}"
+        filepath = output_path / filename
+
+        result = generate_diagram(workflow['content'], str(filepath))
+        if result:
+            generated.append(result)
+
+    return generated
+
+
 def main():
-    if len(sys.argv) < 2:
-        # Default: use sample input
+    # Parse arguments
+    auto_extract = '--auto' in sys.argv or '-a' in sys.argv
+    args = [a for a in sys.argv[1:] if not a.startswith('-')]
+
+    if not args:
         input_file = Path(__file__).parent / "sample_input.txt"
     else:
-        input_file = Path(sys.argv[1])
+        input_file = Path(args[0])
 
     if not input_file.exists():
         print(f"Error: Input file not found: {input_file}")
         sys.exit(1)
 
     text = input_file.read_text()
-    output_file = input_file.stem + "_diagram"  # extension added by generate_diagram
 
-    generate_diagram(text, output_file)
+    if auto_extract:
+        # Auto-extract mode: find all "How to" sections and generate diagrams
+        output_dir = args[1] if len(args) > 1 else f"{input_file.stem}_diagrams"
+        generated = generate_all_workflows(text, output_dir)
+        print(f"\n{'='*50}")
+        print(f"Generated {len(generated)} diagram(s) in '{output_dir}/'")
+    else:
+        # Single diagram mode (original behavior)
+        output_file = input_file.stem + "_diagram"
+        generate_diagram(text, output_file)
 
 
 if __name__ == "__main__":

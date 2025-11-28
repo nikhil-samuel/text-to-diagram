@@ -1,0 +1,505 @@
+Version : Release 4
+
+Last updated : November 2025
+
+---
+
+# Welcome
+
+Welcome to the Qantev Claims Registration Platform, designed specifically for BGLA. Our platform streamlines your claims registration process by integrating data from multiple sources, validating information, and guiding you through each step with efficiency and accuracy. This guide will help you navigate the platform, ensuring you get the most out of its features and optimize your claims registration workflow.
+
+# **For Data Entry Teams**
+
+## **Getting Started**
+
+### **Logging in**
+
+Access is managed through a secure authentication system that uses your existing corporate credentials.
+
+- Go to the Qantev URL. You'll be redirected to the Single Sign-On (SSO) page.
+- Enter your BGLA username and password.
+- After authentication, you'll land on the Qantev dashboard, ready to work.
+- If you have login issues, contact your system administrator for help.
+
+## **Claims Registration**
+
+Claims registration is a core function of Qantev for BGLA, offering a streamlined, organized workflow from claim submission to registration.
+
+## **Document Processing and Integration**
+
+Qantev's document management features enable claim team members to efficiently upload, view, and manage all claim-related documents directly within the platform.
+
+## **Medical Codes Selection**
+
+Qantev provides specialized tools for selecting and managing medical codes on claims. Medical code fields support ICD-10 diagnosis codes, CPT procedure codes, and custom medical codes defined by your organization.
+
+---
+
+# **Part 2: For Admin Team**
+
+## **Administration - Claim Type Builder**
+
+The Claim Type Builder is a key administrative tool in Qantev for BGLA, allowing you to define and manage the structure of different insurance claim categories.
+
+## **Administration - Medical Codes Catalog**
+
+The Medical Codes Catalog enables administrators to create, manage, and organize medical codes that can be used across claim types.
+
+## **Administration - AI Medical Codes Inference**
+
+When enabled, Qantev automatically analyzes claim information and suggests relevant medical codes.
+
+## **Administration - Rejection Reasons Catalogue**
+
+The Rejection Reasons Catalogue allows administrators to create, manage, and standardize the reasons used when rejecting claims.
+
+## **API Monitoring and Integration**
+
+The API Requests section in the Administration workspace is your central hub for monitoring and analyzing all API interactions.
+
+## **Webhooks Configuration**
+
+Webhooks allow Qantev to notify external systems in real-time when specific events occur.
+
+---
+
+# **PART 3: Step-by-Step Workflows**
+
+This section provides detailed instructions for completing common tasks in Qantev.
+
+### **How to Register a Claim**
+
+**Overview:** Follow these steps to register a claim from start to finish.
+
+**Navigate to Claims**
+
+- Click **"Claims"** in the left navigation menu.
+- The claims list table appears with columns: Claim ID, Received At, Status, Assignee.
+- Use pagination controls (10, 20, 50, or 100 per page) to find your claim.
+- Focus on claims with "Open" status - these require registration.
+
+**Open Claim Details**
+
+- Click anywhere on the desired claim row.
+- The claim details page opens, featuring:
+    - **Tabs:** Claim Fields tab and Service Lines tab for organized data entry
+    - **Right panel:** Documents (toggle with the button in the header)
+    - **Header:** Displays Claim ID, status, assignee, and verification progress
+
+**Review and Verify Claim Fields**
+
+- Start with the **Claim Fields** tab (default view)
+- Use the "All Fields" or "All Issues" filters to focus your review
+- For each field needing attention:
+    - Click the field card to focus
+    - Review suggested values (if available) from document extraction, API sources, or AI inference
+    - For medical code fields, use the code browser or search to find appropriate codes
+    - Select from autocomplete suggestions **or** type a manual value
+    - Click the **"Verify"** button (appears on focus for pending fields)
+    - Use **Tab** or **Enter** to move efficiently between fields
+
+**Review and Verify Service Lines**
+
+- Switch to the **Service Lines** tab
+- Review each service line entry
+- Verify fields within each service line, including any medical code fields
+- Complete all required service line fields
+
+**Upload and Review Documents**
+
+- Click the document toggle button in the header to open the Documents panel.
+- **Upload documents:**
+    - Drag and drop files into the upload area, or
+    - Click to browse and select files.
+    - Accepted formats: PDF, JPEG, PNG, JPG (up to 25MB per file).
+- **View documents:**
+    - **List View:** See all uploaded documents.
+    - **Document View:** Click a document to view it in the PDF/image viewer.
+    - Use the document selector dropdown to switch between files.
+
+**Complete Registration**
+
+- Ensure all fields in both Claim Fields and Service Lines tabs show verified status (green checkmarks).
+- When all fields are verified, an auto-success alert appears.
+- Click the **"Register"** button in the footer (enabled only when all fields are verified).
+- Confirm in the modal dialog.
+- Upon success, claim status updates to "Registered" and you can return to the claims list.
+
+**Alternative: Reject a Claim**
+
+- Click the **"Reject"** button in the footer.
+- **Select a rejection reason** from the configured catalog dropdown.
+- Optionally add notes to provide additional context specific to this claim.
+- Confirm the rejection.
+- Claim status updates to "Rejected" with the specified reason visible in claim details and external APIs.
+
+---
+
+### **How to Select Medical Codes**
+
+**Overview:** Follow these steps to select medical codes for a claim.
+
+**Locate Medical Code Fields**
+
+- Open the claim details page
+- Medical code fields appear with a medical icon indicator
+- Fields may be in the Claim Fields tab or Service Lines tab depending on configuration
+
+**Open the Code Selection Interface**
+
+- Click on the medical code field
+- The code selection interface opens with:
+    - **Search bar:** Find codes by value or description
+    - **Hierarchy browser:** Browse codes in their standard structure
+    - **AI suggestions:** If available, suggested codes appear as candidates
+
+**Search for a Code**
+
+- Type the code value or part of the description in the search bar
+- Results appear as you type (with a brief delay for optimal performance)
+- Click on a search result to select it
+
+**Browse Code Hierarchies**
+
+- Click on parent codes to expand and see child codes
+- Navigate up and down the hierarchy as needed
+- Click on a code to select it
+
+**Review AI Suggestions**
+
+- If AI inference is enabled, suggested codes appear as candidate values
+- Each suggestion shows the "AI" source indicator
+- Review suggestions against claim documentation
+- Click on a suggestion to select it
+
+**Select Multiple Codes (if applicable)**
+
+- If the field is configured as repeatable, add multiple codes
+- Click the add button to include additional codes
+- Remove codes by clicking the remove icon
+
+**Verify the Field**
+
+- After selecting the appropriate code(s), verify the field
+- The field status updates to verified (green checkmark)
+
+---
+
+### **How to Split a Claim**
+
+For claims requiring division into multiple related claims, Qantev provides a manual claim splitting workflow:
+
+1. **Initiate Split Workflow:**
+Click "Split Claim" in the footer of the claim details page. The split modal opens, prompting you to specify how many split claims you want to create.
+
+2. **Assign Documents:**
+Review all uploaded documents for the claim. Assign each document to the appropriate split claim. You can choose documents to ensure they are linked to the correct new claim.
+
+3. **Field Duplication:**
+When a claim is split, Qantev duplicates all fields and all candidate field values from the original claim to every new split claim. This means each resulting claim will initially contain the same set of fields and candidate values as the original.
+
+4. **Document Assignment:**
+Documents are assigned to split claims exactly as specified by the user during the workflow.
+
+5. **Status Update:**
+After confirming the split, the original claim's status is updated to "Split." Each new claim created through splitting will appear in the claims list and must be processed individually.
+
+6. **Webhook Notification:**
+A claim_split webhook event is sent to configured endpoints, notifying external systems of the split operation.
+
+---
+
+### **How to Upload and Manage Documents**
+
+**Accessing the Documents Panel**
+
+- Open any claim details page.
+- Click the document toggle button in the header (right side).
+- The Documents panel slides in from the right.
+
+**Uploading New Documents**
+
+- In the Documents panel, locate the upload area.
+- **Method 1 - Drag & Drop:** Drag files from your computer and drop them into the upload area. Watch the real-time upload progress.
+- **Method 2 - Click to Browse:** Click the upload button and select files from your file browser. Upload begins automatically.
+
+**Viewing and Navigating Documents**
+
+- **List View:** See all documents with file names and types.
+- **Document View:** Click any document in the list, or use the selector dropdown to switch between files.
+- The PDF viewer loads for PDFs; the image viewer loads for JPEG/PNG files.
+
+**Manual Document Classification**
+
+- In Document View, use the document type selector dropdown.
+- Choose the most appropriate type for each document (system fetches options from the backend).
+- Classification states:
+    - **Success:** Document classified successfully.
+    - **Partial:** Some documents classified, others pending.
+    - **Failed:** Classification failed - retry or contact support.
+    - **Low Confidence:** System is unsure - manual review recommended.
+    - **Review Needed:** Document requires human verification.
+- Changes save automatically with visual feedback; error messages explain any issues.
+
+---
+
+### **How to Split a Document**
+
+Qantev allows you to split a multi-page PDF into separate documents directly within the platform.
+
+**To split a document:**
+
+1. **Open the Claim Details Page:**
+Navigate to the claim containing the multi-page PDF you want to split.
+
+2. **Access the Documents Panel:**
+Click the document toggle button in the claim details header to open the Documents panel.
+
+3. **Select the Document:**
+In List View or Document View, click on the multi-page PDF you wish to split.
+
+4. **Click the "Split Document" Button:**
+The "Split Document" button appears in the document viewer for eligible PDFs. Click this button to begin the splitting process.
+
+5. **Configure Splits in the Modal:**
+    - The split modal will open, showing a preview of the document.
+    - For each new document you want to create, define the page range (e.g., pages 1-3 for the first split, 4-5 for the second, etc.).
+    - Assign a document class (such as Invoice, Medical Report, or Supporting Documentation) to each split.
+    - Optionally, set a custom name for each new document (the system will suggest a default name based on the original).
+
+6. **Validate and Confirm:**
+    - The system checks for overlapping or missing pages and ensures all pages are assigned.
+    - Review your configuration in the summary.
+    - Click "Confirm Split" to finalize. The original document will be split into separate, classified documents, each linked to the claim.
+
+7. **Result:**
+    - The new documents will appear in the Documents panel, each with its assigned class and name.
+    - You can now view, download, or further manage each document individually.
+
+---
+
+### **How to Use Field Verification Features**
+
+**Understanding Field Status**
+
+- **Yellow/Pending icon:** Field needs verification.
+- **Green checkmark:** Field is verified and ready.
+- **Error indicators:** Field has validation issues.
+
+**Field Verification Process**
+
+- Click on the field card to focus.
+- Review source information (Manual, API, Document Extraction, AI).
+- Select the best value:
+    - Choose from autocomplete suggestions (from document processing or AI inference), **or**
+    - Enter a manual value.
+- Click the **"Verify"** button that appears on focus.
+- Field status updates immediately to verified.
+
+**Keyboard Navigation**
+
+- **Tab:** Move to the next field.
+- **Enter:** Also moves to the next field.
+- **Arrow keys:** Navigate within autocomplete suggestions.
+
+---
+
+### **How to Create and Configure Claim Types**
+
+**Accessing the Claim Type Builder**
+
+- Click **"Administration"** in the left navigation.
+- Select **"Claim Type Builder."**
+- View all existing claim types in a card layout.
+
+**Creating a New Claim Type**
+
+- Click the **"Create"** button (if available).
+- Fill in basic information:
+    - Claim type name
+    - Description and purpose
+- Configure fields in the right panel:
+    - Add required fields
+    - Add optional fields
+    - Set field types and validation rules
+    - Add object fields for complex data structures
+    - Add medical code fields linked to catalogs
+    - Configure repeatable fields
+
+**Editing an Existing Claim Type**
+
+- Click on a claim type card.
+- Two-column layout opens:
+    - **Left:** General information
+    - **Right:** Field management, including objects and medical codes
+- Make changes as needed.
+- Navigation blocker prevents accidental loss of changes.
+- Save changes explicitly.
+
+**Managing Fields**
+
+- In claim type details, use the right panel for fields.
+- **Add new fields:** Click add button, configure properties.
+- **Add objects:** Click "Add an Object" to create repeatable object fields for complex data like invoices or medical procedures.
+- **Add medical code fields:** Click "Add Field" and select "Medical Code" type, then link to appropriate catalog.
+- **Edit existing fields:** Click a field to open the details drawer.
+- Configure field properties:
+    - Field type (text, number, date, object, medical_code, etc.)
+    - Catalog selection (for medical code fields)
+    - Validation rules
+    - Required vs. optional status
+    - Repeatable toggle
+- Save field changes in the drawer.
+
+**Configuring Object Fields**
+
+- Click "Add an Object" in the field management panel.
+- Define object properties:
+    - Object name and display label
+    - Link to document type for automatic extraction
+    - Required vs. optional
+    - Minimum and maximum instances (for repeatable objects)
+- Add fields within the object:
+    - Define child fields with their own types and validation
+    - Support nested objects for complex hierarchies
+    - Configure field repeatability within objects
+- Link object to document class for automatic extraction when documents are uploaded.
+- Save object configuration.
+
+**Configuring Medical Code Fields**
+
+- Click "Add Field" in the field management panel.
+- Select "Medical Code" as the field type.
+- Configure medical code properties:
+    - Field name and key
+    - Linked catalog (ICD-10, CPT, or custom)
+    - Required vs. optional
+    - Repeatable (for fields requiring multiple codes)
+- Save field configuration.
+- The field will now use codes from the linked catalog for selection.
+
+---
+
+### **How to Manage Medical Code Catalogs**
+
+**Accessing Catalog Management**
+
+- Click **"Administration"** in the left navigation.
+- Select **"Catalogs."**
+- View all catalogs with their status and code counts.
+
+**Creating a New Catalog**
+
+1. Click **"Create"** in the catalog interface.
+2. Fill in the required information:
+    - **Display Name:** Descriptive name (e.g., "Custom Procedure Codes")
+    - **Description:** Purpose of the catalog
+    - **Status:** Active or Archived
+3. Save the catalog.
+
+**Adding Codes to a Catalog**
+
+1. Open the catalog from the list.
+2. Click **"Add Code"** to create a new code.
+3. Fill in code details:
+    - **Code:** The code value (e.g., "J18.9")
+    - **Name:** Descriptive name (e.g., "Pneumonia, unspecified organism")
+    - **Description:** Additional details
+    - **Parent Code:** Optional, for hierarchical organization
+4. Save the code.
+
+**Organizing Code Hierarchies**
+
+- Assign parent codes to create hierarchies.
+- Top-level codes appear at the root.
+- Child codes appear nested under parents in the selection interface.
+
+**Linking Catalogs to Fields**
+
+1. Open **Claim Type Builder**.
+2. Add or edit a medical code field.
+3. Select the catalog in the field configuration.
+4. Save the field.
+
+---
+
+### **How to Monitor API Integrations**
+
+**Accessing API Monitoring**
+
+- Click **"Administration"** in the left navigation.
+- Select **"API Requests."**
+- View the real-time API activity table.
+
+**Reviewing API Calls**
+
+- Table columns show:
+    - Request method and endpoint
+    - Timestamp
+    - Related claim (if applicable)
+    - Response status code (color-coded: green for 200 series, red for 400/500 series)
+
+**Investigating API Issues**
+
+- Click any row to expand and view the full request payload and response details.
+- Copy data for troubleshooting.
+- Track patterns across multiple requests.
+- Review webhook delivery attempts and their outcomes.
+- Monitor AI inference requests and responses.
+
+**Monitoring System Health**
+
+- Look for error patterns (e.g., multiple 500 errors).
+- Check response times in timestamps.
+- Identify integration issues early and correlate them with claim processing problems.
+- Monitor webhook retry attempts for failed deliveries.
+
+---
+
+### **How to Configure Rejection Reasons**
+
+**Accessing Rejection Reasons**
+
+- Click **"Administration"** in the left navigation.
+- Select **"Rejection Reasons."**
+- View all configured rejection reasons with their codes, descriptions, and status.
+
+**Creating a New Rejection Reason**
+
+1. Click **"Create"** in the rejection reasons interface.
+2. Fill in required information:
+    - **Code:** Short, unique identifier (e.g., "MISSING_MEMBER_ID", "INVALID_SERVICE_DATE")
+    - **Description:** Clear explanation that helps users understand what to correct
+    - **Status:** Active (visible to data entry teams) or Archived
+3. Save the rejection reason.
+
+**Editing Rejection Reasons**
+
+- Click on any rejection reason to open the details drawer.
+- Update code, description, or status as needed.
+- Save changes - updates are reflected immediately for data entry teams.
+
+**Archiving Rejection Reasons**
+
+- Change status to "Archived" for reasons no longer in use.
+- Archived reasons remain in historical records and on previously rejected claims.
+- Data entry teams will no longer see archived reasons in the selection dropdown.
+
+**Best Practices for Creating Effective Rejection Reasons**
+
+Be Specific and Actionable:
+- Good: "MISSING_MEMBER_ID" - "Member ID field is empty. Please provide the member's insurance ID number."
+- Good: "INVALID_SERVICE_DATE" - "Service date is in the future or more than 12 months in the past. Please verify the date."
+- Poor: "ERROR" - "Something is wrong"
+
+Organize by Category:
+- Documentation Issues: MISSING_INVOICE, MISSING_MEDICAL_RECORD, ILLEGIBLE_DOCUMENT
+- Data Validation Issues: MISSING_MEMBER_ID, INVALID_SERVICE_DATE, NEGATIVE_AMOUNT
+- Eligibility Issues: MEMBER_NOT_FOUND, POLICY_EXPIRED, SERVICE_NOT_COVERED
+- Business Rule Violations: EXCEEDS_POLICY_LIMIT, DUPLICATE_CLAIM, OUTSIDE_FILING_DEADLINE
+
+---
+
+# Conclusion
+
+This guide has given you a comprehensive introduction to the core features and workflows of the Qantev platform for BGLA.
