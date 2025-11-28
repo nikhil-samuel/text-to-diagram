@@ -22,10 +22,12 @@ load_dotenv()
 REQUEST_DELAY = 60  # seconds between requests (free tier is strict)
 MAX_RETRIES = 3
 
-# Model options:
-# - "gemini-2.0-flash-preview-image-generation" (free tier available)
-# - "imagen-3.0-generate-002" (paid tier)
-DEFAULT_MODEL = "gemini-2.0-flash-preview-image-generation"
+# Model options (image generation):
+# - "gemini-2.5-flash-image-preview" (free tier available)
+# - "gemini-2.5-flash-image" (free tier available)
+# - "gemini-3-pro-image-preview" (paid tier)
+# - "imagen-4.0-generate-001" (paid tier)
+DEFAULT_MODEL = "gemini-2.5-flash-image-preview"
 MODEL = DEFAULT_MODEL
 
 
