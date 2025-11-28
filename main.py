@@ -9,17 +9,24 @@ Supports auto-extraction of multiple workflows from a single document.
 import os
 import re
 import sys
+import time
 from pathlib import Path
 from dotenv import load_dotenv
 import google.genai as genai
 from google.genai import types
+from google.genai.errors import ClientError
 
 load_dotenv()
 
+# Rate limiting settings
+REQUEST_DELAY = 60  # seconds between requests (free tier is strict)
+MAX_RETRIES = 3
+
 # Model options:
-# - "gemini-3-pro-image-preview" (Nano Banana Pro - requires paid tier)
-# - "gemini-2.5-flash-image" (free tier available)
-MODEL = "gemini-3-pro-image-preview"
+# - "gemini-2.0-flash-preview-image-generation" (free tier available)
+# - "imagen-3.0-generate-002" (paid tier)
+DEFAULT_MODEL = "gemini-2.0-flash-preview-image-generation"
+MODEL = DEFAULT_MODEL
 
 
 def create_diagram_prompt(how_to_text: str) -> str:
@@ -55,8 +62,8 @@ def get_image_extension(data: bytes) -> str:
     return '.png'  # default fallback
 
 
-def generate_diagram(text: str, output_path: str = "diagram") -> str:
-    """Generate a diagram from text using Nano Banana Pro."""
+def generate_diagram(text: str, output_path: str = "diagram", retries: int = MAX_RETRIES) -> str:
+    """Generate a diagram from text using Nano Banana Pro with retry logic."""
     api_key = os.getenv("GOOGLE_API_KEY")
     if not api_key:
         raise ValueError("GOOGLE_API_KEY not found in environment variables")
@@ -77,34 +84,57 @@ def generate_diagram(text: str, output_path: str = "diagram") -> str:
         temperature=1.0
     )
 
-    print(f"Generating diagram with Nano Banana Pro ({MODEL})...")
+    for attempt in range(retries):
+        try:
+            print(f"Generating diagram with {MODEL}...")
 
-    # Stream and collect image data
-    image_data = None
-    for chunk in client.models.generate_content_stream(
-        model=MODEL,
-        contents=contents,
-        config=config
-    ):
-        if chunk.candidates:
-            for part in chunk.candidates[0].content.parts:
-                if hasattr(part, 'inline_data') and part.inline_data:
-                    image_data = part.inline_data.data
+            # Stream and collect image data
+            image_data = None
+            for chunk in client.models.generate_content_stream(
+                model=MODEL,
+                contents=contents,
+                config=config
+            ):
+                if chunk.candidates:
+                    for part in chunk.candidates[0].content.parts:
+                        if hasattr(part, 'inline_data') and part.inline_data:
+                            image_data = part.inline_data.data
 
-    if image_data:
-        # Detect actual format and use correct extension
-        ext = get_image_extension(image_data)
-        # Remove any existing extension from output_path
-        base_path = output_path.rsplit('.', 1)[0] if '.' in output_path else output_path
-        final_path = base_path + ext
+            if image_data:
+                # Detect actual format and use correct extension
+                ext = get_image_extension(image_data)
+                base_path = output_path.rsplit('.', 1)[0] if '.' in output_path else output_path
+                final_path = base_path + ext
 
-        with open(final_path, 'wb') as f:
-            f.write(image_data)
-        print(f"Diagram saved to: {final_path}")
-        return final_path
-    else:
-        print("No image generated.")
-        return None
+                with open(final_path, 'wb') as f:
+                    f.write(image_data)
+                print(f"Diagram saved to: {final_path}")
+                return final_path
+            else:
+                print("No image generated.")
+                return None
+
+        except ClientError as e:
+            if e.code == 429:  # Rate limit
+                # Extract retry delay from error if available
+                wait_time = 60
+                if 'retryDelay' in str(e):
+                    import re
+                    match = re.search(r'retry in (\d+)', str(e), re.IGNORECASE)
+                    if match:
+                        wait_time = int(match.group(1)) + 5
+
+                if attempt < retries - 1:
+                    print(f"Rate limited. Waiting {wait_time}s before retry ({attempt + 1}/{retries})...")
+                    time.sleep(wait_time)
+                else:
+                    print(f"Failed after {retries} attempts due to rate limiting.")
+                    return None
+            else:
+                print(f"API Error: {e}")
+                return None
+
+    return None
 
 
 def extract_workflows(text: str) -> list[dict]:
@@ -155,6 +185,9 @@ def generate_all_workflows(text: str, output_dir: str = "diagrams") -> list[str]
     print(f"Found {len(workflows)} workflow(s):")
     for i, w in enumerate(workflows, 1):
         print(f"  {i}. {w['title']}")
+
+    total_time = len(workflows) * REQUEST_DELAY // 60
+    print(f"\nEstimated time: ~{total_time} minutes (rate limit: {REQUEST_DELAY}s between requests)")
     print()
 
     # Create output directory
@@ -162,6 +195,7 @@ def generate_all_workflows(text: str, output_dir: str = "diagrams") -> list[str]
     output_path.mkdir(exist_ok=True)
 
     generated = []
+    failed = []
     for i, workflow in enumerate(workflows, 1):
         print(f"\n[{i}/{len(workflows)}] Generating: {workflow['title']}")
         filename = f"{i:02d}_{slugify(workflow['title'])}"
@@ -170,13 +204,34 @@ def generate_all_workflows(text: str, output_dir: str = "diagrams") -> list[str]
         result = generate_diagram(workflow['content'], str(filepath))
         if result:
             generated.append(result)
+        else:
+            failed.append(workflow['title'])
+
+        # Delay between requests to avoid rate limits (except after last one)
+        if i < len(workflows):
+            print(f"Waiting {REQUEST_DELAY}s before next request...")
+            time.sleep(REQUEST_DELAY)
+
+    if failed:
+        print(f"\nFailed to generate {len(failed)} diagram(s):")
+        for title in failed:
+            print(f"  - {title}")
 
     return generated
 
 
 def main():
+    global MODEL
+
     # Parse arguments
     auto_extract = '--auto' in sys.argv or '-a' in sys.argv
+
+    # Check for model override
+    for arg in sys.argv:
+        if arg.startswith('--model='):
+            MODEL = arg.split('=', 1)[1]
+            print(f"Using model: {MODEL}")
+
     args = [a for a in sys.argv[1:] if not a.startswith('-')]
 
     if not args:
